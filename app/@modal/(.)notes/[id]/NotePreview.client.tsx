@@ -4,8 +4,12 @@ import css from './NotePreview.module.css';
 
 interface NotePreviewClientProps extends Note {}
 
-const NotePreviewClient = ({ title, content, createdAt, tag }: NotePreviewClientProps) => {
-
+const NotePreviewClient = ({
+  title,
+  content,
+  createdAt,
+  tag,
+}: NotePreviewClientProps) => {
   return (
     <Modal>
       <div className={css.header}>

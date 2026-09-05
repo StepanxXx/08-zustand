@@ -9,9 +9,7 @@ const NotePreview = async ({ params }: Props) => {
   const { id } = await params;
   const note = await fetchNoteById(id);
 
-  return (
-    <NotePreviewClient {...note} />
-  );
+  return <NotePreviewClient {...note} />;
 };
 
 export default NotePreview;
