@@ -2,17 +2,18 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteNote, createNote } from '@/lib/api';
 import { toast } from 'react-hot-toast';
 
-
-
-export const useNoteCreate = (onSuccessCallback: () => void) => {
+export const useNoteCreate = (onSuccessCallback?: () => void) => {
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
     mutationFn: createNote,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['notes'],
+        refetchType: 'all',
+      });
       toast.success('Note created successfully!');
-      onSuccessCallback();
+      onSuccessCallback?.();
     },
     onError: error => {
       toast.error(error.message);
@@ -27,8 +28,11 @@ export const useNoteDelete = () => {
 
   const deleteMutation = useMutation({
     mutationFn: deleteNote,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['notes'],
+        refetchType: 'all',
+      });
       toast.success('Note deleted successfully!');
     },
     onError: error => {

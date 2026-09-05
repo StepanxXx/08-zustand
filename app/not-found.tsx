@@ -4,7 +4,6 @@ import css from './Home.module.css';
 
 import baseUrl from '@/lib/getBaseUrl';
 
-
 export const metadata: Metadata = {
   title: '404 - Page not found',
   description: 'Sorry, the page you are looking for does not exist.',

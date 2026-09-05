@@ -9,7 +9,7 @@ export const useNotes = (search: string, page: number, tag?: Tag | null) => {
     queryKey: ['notes', search, page, tag],
     queryFn: () => fetchNotes(search, page, tag),
     placeholderData: keepPreviousData,
-    refetchOnMount: false,
+    staleTime: 1000 * 60,
   });
   useEffect(() => {
     if (response.isError) {
