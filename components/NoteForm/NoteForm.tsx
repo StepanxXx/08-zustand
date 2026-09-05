@@ -1,6 +1,5 @@
 'use client';
 
-import type { Metadata } from 'next';
 import { useRouter } from 'next/navigation';
 import type { NoteTag, NewNote } from '../../types/note';
 import * as Yup from 'yup';
@@ -8,34 +7,6 @@ import { useId, useState } from 'react';
 import { useNoteCreate } from '../../hooks/useNotesMutations';
 import { useNoteDraftStore } from '@/lib/stores/noteStore';
 import css from './NoteForm.module.css';
-import baseUrl from '@/lib/getBaseUrl';
-
-
-export const metadata: Metadata = {
-  title: 'Create Note',
-  description: 'Create a new note',
-  openGraph: {
-    title: 'Create Note',
-    description: 'Create a new note',
-    url: `${baseUrl}/notes/action/create`,
-    siteName: 'Create Note',
-    images: [
-      {
-        url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'NoteHub',
-      },
-    ],
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Create Note',
-    description: 'Create a new note.',
-    images: ['https://ac.goit.global/fullstack/react/notehub-og-meta.jpg'],
-  },
-};
 
 const tagArray: NoteTag[] = [
   'Todo',

@@ -12,13 +12,14 @@ NoteHub — застосунок на Next.js для перегляду та к�
 - фільтрація за тегами `Work`, `Personal`, `Meeting`, `Shopping` і `Todo`;
 - перегляд усіх нотаток через фільтр `All notes` без передачі тега в API;
 - клієнтське перемикання фільтрів без повного перезавантаження сторінки;
-- створення нотаток у модальному вікні з валідацією форми;
+- створення нотаток на окремому маршруті `/notes/action/create` з валідацією форми через Yup;
+- збереження чернетки нотатки в локальному сховищі (`localStorage`) за допомогою Zustand (`persist` middleware) з автоматичним відновленням при перезавантаженні сторінки та очищенням після успішного збереження;
 - видалення нотаток;
-- перегляд деталей нотатки на окремій сторінці або в intercepting-модальному
-  маршруті при переході зі списку;
+- перегляд деталей нотатки на окремій сторінці або в intercepting-модальному маршруті при переході зі списку;
+- динамічні та статичні метадані (Next.js Metadata API, Open Graph, Twitter Cards) для сторінок застосунку, включаючи сторінку 404 (`not-found.tsx`) та динамічне визначення базового URL;
 - серверне попереднє завантаження даних і гідратація кешу TanStack Query;
-- кешування та автоматичне оновлення даних після мутацій;
-- індикатор завантаження, повідомлення про успішні операції та помилки;
+- кешування та автоматична інвалідація кешу після мутацій;
+- індикатор завантаження, повідомлення про успішні операції та помилки (React Hot Toast);
 - окремі сторінки обробки помилок для маршрутів нотаток.
 
 ## Технології
@@ -26,6 +27,8 @@ NoteHub — застосунок на Next.js для перегляду та к�
 - Next.js 16 (App Router) і React 19;
 - паралельні, динамічні, catch-all та intercepting маршрути Next.js;
 - TypeScript;
+- Zustand (з middleware `persist` для збереження стану чернетки в `localStorage`);
+- Yup (схема валідації полів форми);
 - TanStack Query;
 - Axios;
 - CSS Modules;
@@ -44,8 +47,8 @@ NoteHub — застосунок на Next.js для перегляду та к�
 1. Клонуйте репозиторій і перейдіть до каталогу проєкту:
 
    ```bash
-   git clone https://github.com/StepanxXx/07-routing-nextjs.git
-   cd 07-routing-nextjs
+   git clone https://github.com/StepanxXx/08-zustand.git
+   cd 08-zustand
    ```
 
 2. Встановіть залежності:
@@ -59,6 +62,7 @@ NoteHub — застосунок на Next.js для перегляду та к�
    ```env
    NEXT_PUBLIC_NOTEHUB_URL=https://your-notehub-api.example.com
    NEXT_PUBLIC_NOTEHUB_TOKEN=your_access_token
+   NEXT_PUBLIC_SITE_URL=http://localhost:3000
    ```
 
    `NEXT_PUBLIC_NOTEHUB_URL` — базова адреса API, а `NEXT_PUBLIC_NOTEHUB_TOKEN`
@@ -83,6 +87,7 @@ NoteHub — застосунок на Next.js для перегляду та к�
 | `/notes/filter/{tag}`  | Нотатки з вибраним тегом                    |
 | `/notes/[id]`          | Окрема сторінка деталей нотатки             |
 | `@modal/(.)notes/[id]` | Деталі в модальному вікні зі списку нотаток |
+| `/notes/action/create` | Сторінка створення нової нотатки            |
 
 Фільтрація реалізована catch-all маршрутом
 `app/notes/filter/[...slug]/page.tsx`. Меню тегів знаходиться у паралельному
@@ -107,17 +112,26 @@ NoteHub — застосунок на Next.js для перегляду та к�
 ```text
 app/
 ├── @modal/                  # паралельний слот та intercepting-маршрут деталей
+├── layout.tsx               # кореневий лейаут із глобальними метаданими
+├── not-found.tsx            # сторінка 404 з метаданими
+├── page.tsx                 # головна сторінка
 └── notes/
-    ├── [id]/               # динамічна сторінка нотатки
+    ├── [id]/                # динамічна сторінка нотатки
+    ├── action/
+    │   └── create/          # сторінка створення нотатки
     └── filter/
-        ├── @sidebar/       # паралельний слот із меню тегів
-        └── [...slug]/      # catch-all маршрут фільтрації
-components/                 # UI-компоненти та CSS Modules
-hooks/                      # запити й мутації TanStack Query
-lib/                        # HTTP-функції NoteHub API
-providers/                  # глобальні React-провайдери
-public/                     # статичні ресурси
-types/                      # TypeScript-типи нотаток і тегів
+        ├── @sidebar/        # паралельний слот із меню тегів
+        └── [...slug]/       # catch-all маршрут фільтрації
+components/                  # UI-компоненти та CSS Modules
+hooks/                       # запити й мутації TanStack Query
+lib/                         # HTTP-функції API, утиліти та Zustand-стори
+│   ├── api.ts               # клієнт Axios та методи API
+│   ├── getBaseUrl.ts        # визначення базового URL застосунку
+│   └── stores/
+│       └── noteStore.ts     # Zustand-стор чернетки нотатки з persist
+providers/                   # глобальні React-провайдери (TanStack Query, Toasts)
+public/                      # статичні ресурси
+types/                       # TypeScript-типи нотаток і тегів
 ```
 
 Опис контракту API збережений у файлі [`swagger.json`](./swagger.json).
