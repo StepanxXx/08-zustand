@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'NoteHub',
     description: 'Application for viewing and managing personal notes.',
-    images: [baseUrl + '/notehub-og-meta.jpg'],
+    images: ['https://ac.goit.global/fullstack/react/notehub-og-meta.jpg'],
   },
 };
 
