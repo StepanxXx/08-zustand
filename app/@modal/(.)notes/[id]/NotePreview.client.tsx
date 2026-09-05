@@ -2,14 +2,7 @@ import Modal from '@/components/Modal/Modal';
 import type { Note } from '@/types/note';
 import css from './NotePreview.module.css';
 
-interface NotePreviewClientProps extends Note {}
-
-const NotePreviewClient = ({
-  title,
-  content,
-  createdAt,
-  tag,
-}: NotePreviewClientProps) => {
+const NotePreviewClient = ({ title, content, createdAt, tag }: Note) => {
   return (
     <Modal>
       <div className={css.header}>
