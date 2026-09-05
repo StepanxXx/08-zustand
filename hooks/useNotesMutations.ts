@@ -2,7 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteNote, createNote } from '@/lib/api';
 import { toast } from 'react-hot-toast';
 
-export const useNoteCreate = () => {
+
+
+export const useNoteCreate = (onSuccessCallback: () => void) => {
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
@@ -10,6 +12,7 @@ export const useNoteCreate = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
       toast.success('Note created successfully!');
+      onSuccessCallback();
     },
     onError: error => {
       toast.error(error.message);

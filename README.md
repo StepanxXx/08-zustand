@@ -28,7 +28,6 @@ NoteHub — застосунок на Next.js для перегляду та к�
 - TypeScript;
 - TanStack Query;
 - Axios;
-- Formik і Yup;
 - CSS Modules;
 - React Hot Toast, React Paginate, React Loader Spinner та use-debounce;
 - React Compiler;
