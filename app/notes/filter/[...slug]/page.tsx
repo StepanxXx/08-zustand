@@ -19,12 +19,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const tag =
     slug[0] === 'all' || slug[0] === undefined ? 'all' : (slug[0] as Tag);
+  const title = `NoteHub - Notes filtered by ${tag}`;
+  const description = `View and manage NoteHub notes filtered by the ${tag} tag.`;
+
   return {
-    title: `Notes filter by tag: ${tag}`,
-    description: `Application for viewing and managing personal notes by tag: ${tag}`,
+    title,
+    description,
     openGraph: {
-      title: `Notes filter by tag: ${tag}`,
-      description: `Application for viewing and managing personal notes by tag: ${tag}`,
+      title,
+      description,
       url: `${baseUrl}/notes/filter/${tag}`,
       siteName: 'NoteHub',
       images: [
@@ -39,8 +42,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: `Notes filter by tag: ${tag}`,
-      description: `Application for viewing and managing personal notes by tag: ${tag}`,
+      title,
+      description,
       images: ['https://ac.goit.global/fullstack/react/notehub-og-meta.jpg'],
     },
   };

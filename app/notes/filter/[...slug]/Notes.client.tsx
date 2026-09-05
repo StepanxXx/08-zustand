@@ -7,8 +7,6 @@ import Link from 'next/link';
 
 import NoteList from '@/components/NoteList/NoteList';
 import Pagination from '@/components/Pagination/Pagination';
-// import Modal from '@/components/Modal/Modal';
-// import NoteForm from '@/components/NoteForm/NoteForm';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Loader from '@/components/Loader/Loader';
 
@@ -26,7 +24,6 @@ export default function NotesClient({ tag = null }: NotesClientProps) {
   const activeMutations = useIsMutating();
   const [search, setSearch] = useState<string>('');
   const [page, setPage] = useState(1);
-  // const [isOpenModal, setIsOpenModal] = useState(false);
 
   const handleSearch = useDebouncedCallback((value: string) => {
     setSearch(value);
@@ -58,20 +55,12 @@ export default function NotesClient({ tag = null }: NotesClientProps) {
             onPageChange={setPage}
           />
         )}
-        {/* <button className={css.button} onClick={() => setIsOpenModal(true)}>
-          Create note +
-        </button> */}
         <Link className={css.button} href="/notes/action/create">
           Create note +
         </Link>
       </header>
       {notes && notes.length > 0 && <NoteList noteList={notes} />}
       {notes && notes.length === 0 && <h2>No notes found</h2>}
-      {/* {isOpenModal && (
-        <Modal onClose={() => setIsOpenModal(false)}>
-          <NoteForm onClose={() => setIsOpenModal(false)} />
-        </Modal>
-      )} */}
       {isShowLoader && <Loader />}
     </div>
   );

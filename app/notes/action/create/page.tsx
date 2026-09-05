@@ -4,13 +4,13 @@ import css from './CreateNote.module.css';
 import baseUrl from '@/lib/getBaseUrl';
 
 export const metadata: Metadata = {
-  title: 'Create Note',
-  description: 'Create a new note',
+  title: 'NoteHub - Create note',
+  description: 'Create and save a new personal note in NoteHub.',
   openGraph: {
-    title: 'Create Note',
-    description: 'Create a new note',
+    title: 'NoteHub - Create note',
+    description: 'Create and save a new personal note in NoteHub.',
     url: `${baseUrl}/notes/action/create`,
-    siteName: 'Create Note',
+    siteName: 'NoteHub',
     images: [
       {
         url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
@@ -23,8 +23,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Create Note',
-    description: 'Create a new note.',
+    title: 'NoteHub - Create note',
+    description: 'Create and save a new personal note in NoteHub.',
     images: ['https://ac.goit.global/fullstack/react/notehub-og-meta.jpg'],
   },
 };

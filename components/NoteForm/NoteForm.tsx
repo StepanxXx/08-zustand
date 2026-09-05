@@ -5,7 +5,7 @@ import type { NoteTag, NewNote } from '../../types/note';
 import * as Yup from 'yup';
 import { useId, useState } from 'react';
 import { useNoteCreate } from '../../hooks/useNotesMutations';
-import { useNoteDraftStore } from '@/lib/stores/noteStore';
+import { useNoteDraftStore } from '@/lib/store/noteStore';
 import css from './NoteForm.module.css';
 
 const tagArray: NoteTag[] = [
@@ -58,7 +58,6 @@ export default function NoteForm() {
         setErrors(validationErrors);
       }
     }
-    console.log(values, errors, errors.title);
   };
 
   const handleChange = (
