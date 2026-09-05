@@ -1,0 +1,591 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "NoteHub API",
+    "description": "API for managing notes",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://notehub-public.goit.study/api"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Access token generation"
+    },
+    {
+      "name": "Notes",
+      "description": "Operations with notes collection"
+    }
+  ],
+  "paths": {
+    "/auth": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Create unique access token",
+        "operationId": "createAuthToken",
+        "description": "Create a unique access token for the user. If the user exists, return their token; otherwise, create a new user and return the token.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "The email of the user",
+                    "example": "user@example.com",
+                    "format": "email"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User exists, token returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "description": "Existing user token",
+                      "example": "existing.jwt.token.string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Token created successfully for the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "description": "The access token for the user",
+                      "example": "example.jwt.token.string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid request data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/notes": {
+      "get": {
+        "tags": ["Notes"],
+        "summary": "Get list of notes",
+        "operationId": "getNotes",
+        "description": "Get a paginated list of notes with optional search and filtering by tag.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "example"
+            },
+            "description": "Search notes by title or content."
+          },
+          {
+            "in": "query",
+            "name": "tag",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["Work", "Personal", "Meeting", "Shopping", "Todo"],
+              "example": "Todo"
+            },
+            "description": "Filter notes by tag."
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "Page number for pagination."
+          },
+          {
+            "in": "query",
+            "name": "perPage",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 10
+            },
+            "description": "Number of notes per page."
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["created", "updated"],
+              "example": "created"
+            },
+            "description": "Sort notes by created or updated field."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of notes with pagination details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "notes": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/note"
+                      }
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "example": 5
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Notes"],
+        "summary": "Create a new note",
+        "operationId": "createNote",
+        "description": "Create a new note",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title", "tag"],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "The title of the note",
+                    "example": "Sample Note",
+                    "minLength": 1
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "The content of the note (optional)",
+                    "example": "This is a sample content",
+                    "default": ""
+                  },
+                  "tag": {
+                    "type": "string",
+                    "description": "The tag assigned to the note",
+                    "enum": ["Work", "Personal", "Meeting", "Shopping", "Todo"],
+                    "example": "Todo"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Note created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/note"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Validation failed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/notes/{id}": {
+      "get": {
+        "tags": ["Notes"],
+        "summary": "Get note by id",
+        "operationId": "getNote",
+        "description": "Get note by id",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "65ca67e7ae7f10c88b598384"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Note retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/note"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Notes"],
+        "summary": "Delete a note by id",
+        "operationId": "deleteNote",
+        "description": "Delete a note by its id",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "65ca67e7ae7f10c88b598384"
+            },
+            "description": "The ID of the note to be deleted"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Note deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/note"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "\"id\" must be a positive integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "description": "Note not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Note not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Notes"],
+        "summary": "Update a note by id",
+        "operationId": "updateNote",
+        "description": "Update an existing note by its id. All fields are optional and can be updated individually.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "65ca67e7ae7f10c88b598384"
+            },
+            "description": "The ID of the note to be updated"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "The title of the note",
+                    "example": "Updated Note Title",
+                    "minLength": 1
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "The content of the note (optional)",
+                    "example": "Updated note content.",
+                    "default": ""
+                  },
+                  "tag": {
+                    "type": "string",
+                    "description": "The tag assigned to the note",
+                    "enum": ["Work", "Personal", "Meeting", "Shopping", "Todo"],
+                    "example": "Todo"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Note updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/note"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Validation failed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "description": "Note not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Note not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "responses": {
+      "403": {
+        "description": "Unauthorized error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["message"],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Invalid token"
+                }
+              }
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["message"],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Something went wrong."
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Detailed error message (visible only in development)"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "note": {
+        "type": "object",
+        "required": ["id", "title", "content", "createdAt", "updatedAt", "tag"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier for the note",
+            "example": "65ca67e7ae7f10c88b598384"
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the note",
+            "example": "Sample Note"
+          },
+          "content": {
+            "type": "string",
+            "description": "The content of the note",
+            "example": "This is a sample note content."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp when the note was created",
+            "example": "2022-01-01T00:00:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp when the note was last updated",
+            "example": "2022-01-01T00:00:00Z"
+          },
+          "tag": {
+            "type": "string",
+            "description": "The tag assigned to the note",
+            "enum": ["Work", "Personal", "Meeting", "Shopping", "Todo"],
+            "example": "Todo"
+          }
+        }
+      }
+    }
+  }
+}
